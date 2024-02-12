@@ -4,6 +4,30 @@ const getComputerChoice = () => {
     return choices[randomNumber];
 }
 
+const capitalize = (word) => {
+    return word.charAt(0).toUpperCase() + word.slice(1);
+}
+
+let playerScore = 0;
+let computerScore = 0;
+
+const updateScore = (result) => {
+    if (result.includes('Win')) {
+        playerScore++;
+    } else if (result.includes('Lose')) {
+        computerScore++;
+    }
+
+    document.getElementById('score').textContent = `Score - Player: ${playerScore}, Computer: ${computerScore}`;
+
+    if (playerScore === 5 || computerScore === 5) {
+        const winner = playerScore === 5 ? 'Player' : 'Computer';
+        document.getElementById('winner').textContent = `Game Over! ${winner} wins!`;
+        playerScore = 0;
+        computerScore = 0;
+    }
+}
+
 const playRound = (playerSelection, computerSelection) => {
     // Convert playerSelection to lower case for case-insensitivity
     const playerChoice = playerSelection.toLowerCase();
@@ -23,41 +47,11 @@ const playRound = (playerSelection, computerSelection) => {
         return `You Lose! ${capitalize(computer)} beats ${capitalize(player)}`;
     }
 
-    // Function to capitalize the first letter (for display purposes)
-    const capitalize = (word) => {
-        return word.charAt(0).toUpperCase() + word.slice(1);
-    }
-
-    return determineWinner(playerChoice, computerSelection);
+    const result = determineWinner(playerChoice, computerSelection);
+    document.getElementById('results').textContent = result;
+    updateScore(result);
 }
 
-const game = () => {
-    let playerScore = 0;
-    let computerScore = 0;
-
-    for (let i = 0; i < 5; i++) {
-        const playerSelection = prompt("Choose Rock, Paper, or Scissors:");
-        const computerSelection = getComputerChoice();
-        let result = playRound(playerSelection, computerSelection);
-
-        if (result.includes('Win')) {
-            playerScore++;
-        } else if (result.includes('Lose')) {
-            computerScore++;
-        } else {
-            // In case of a tie, repeat the round
-            i--;
-            continue;
-        }
-        console.log(result);
-        console.log(`Score - Player: ${playerScore}, Computer: ${computerScore}`);
-    }
-
-    if (playerScore > computerScore) {
-        console.log("Congrats! You've won the game!");
-    } else {
-        console.log("Sorry! You've lost the game. Better luck next time!");
-    }
-}
-
-game();
+document.getElementById('rock').addEventListener('click', () => playRound('rock', getComputerChoice()));
+document.getElementById('paper').addEventListener('click', () => playRound('paper', getComputerChoice()));
+document.getElementById('scissors').addEventListener('click', () => playRound('scissors', getComputerChoice()));
